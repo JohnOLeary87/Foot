@@ -1,0 +1,104 @@
+using System;
+using System.Collections.Generic;
+public abstract class Competition
+{
+    protected List<List<Result>> results;
+
+    public abstract List<Fixture> Next();
+    public abstract List<Fixture> Check();
+
+    //[0, 1, 2, 3, 4, 5] -random-> [0, 3, 4, 1, 2, 5] etc.
+    protected int[] Seed(Random rnd, int size)
+    {         
+        return Shuffle(rnd, size, 1); //team 0 fixed
+    }
+
+    //[0, 1, 2, 3, 4, 5] -random-> [3, 4, 1, 2, 0, 5] etc.
+    protected int[] Shuffle(Random rnd, int size)
+    {
+        return Shuffle(rnd, size, 0);
+    }
+
+    private int[] Shuffle(Random rnd, int size, int start)
+    {
+        int[] array = GenerateSequence(size);
+        for (int i = start; i < array.Length - 2; i++)
+        {
+            int select = rnd.Next(i + 1, array.Length);// cant swap with self / max value excl. 
+
+            Swap(array, select, i);
+        }
+        return array;
+    }
+
+    //[0,1] -> [1,0]
+    protected void Swap(int[] array, int i, int j)
+    {
+        int temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+
+    //[0, 5, 1, 4, 2, 3] OR [5, 0, 1, 4, 2, 3]
+    protected int[] CreateBergerTable(Random rnd, int size)
+    {
+        int[] temp = new int[size];
+
+        for (int i = 0; i < size; i++)
+        {
+            if (i % 2 < 1) //even
+            {
+                temp[i] = i / 2;
+            }
+            else //odd
+            {
+                temp[i] = (size - 1) - (i - 1 / 2);
+            }
+        }
+        HomeOrAway(rnd, temp); //team 0 can start sequence home or away
+        return temp;
+    }
+
+    //[3, 0, 4, 2, 5, 1] OR [0, 3, 4, 2, 5, 1]
+    //[0, 1, 2, 5, 3, 4] OR [1, 0, 2, 5, 3, 4] etc.
+    protected void UpdateBergerTable(int[] bergerTable)
+    {
+        for (int i = 0; i < bergerTable.Length; i++)
+        {
+            if (bergerTable[i] == 0) { } //team 0 is fixed
+
+            else if (bergerTable[i] < bergerTable.Length / 2)
+            {
+                bergerTable[i] += bergerTable.Length / 2;
+            }
+
+            else
+            {
+                bergerTable[i] -= (bergerTable.Length / 2) - 1;
+            }
+        }
+
+        Swap(bergerTable, 0, 1); //team 0 alternates home/away
+    }
+
+    //[0, 1, 2, 3, 4, 5]
+    protected int[] GenerateSequence(int size)
+    {
+        int[] temp = new int[size];
+
+        for (int i = 0; i < temp.Length; i++)
+        {
+            temp[i] = i;
+        }
+        return temp;
+    }
+
+    //[0, 1] OR [1,0]
+    protected void HomeOrAway(Random rnd, int[] array)
+    {
+        if (rnd.Next(2) == 0)
+        {
+            Swap(array, 0, 1);
+        }
+    }
+}
