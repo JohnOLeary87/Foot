@@ -1,0 +1,11 @@
+public class Fixture
+{
+    public int Home { get; private set; }
+    public int Away { get; private set; }
+
+    public Fixture(int home, int away)
+    {
+        Home = home;
+        Away = away;
+    }
+}
