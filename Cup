@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+public abstract class Cup : Competition
+{
+    protected Stack<int[]> draw;
+
+    public Cup()
+    {
+        draw = new Stack<int[]>();
+    }
+
+    //recursively draw every round until final
+    protected void Knockouts(Random rnd, int roundSize)
+    {
+        if (roundSize > 2) //base case: final?
+        {
+            Knockouts(rnd, roundSize / 2); //recurse
+        }
+        draw.Push(DrawRound(rnd, roundSize));
+    }
+
+    //draw one round
+    protected int[] DrawRound(Random rnd, int roundSize)
+    {
+        int[] draw = Seed(rnd, roundSize);
+        HomeOrAway(rnd, draw); //player's team
+        return draw;
+    }
+}
