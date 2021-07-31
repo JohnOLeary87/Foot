@@ -1,0 +1,97 @@
+using System;
+using System.Collections.Generic;
+public abstract class Division : Competition
+{
+    protected Queue<List<Fixture>> fixtures;
+
+    public Division(Random rnd, List<int> div)
+    {
+        List<List<List<Fixture>>> fixtureBlock = new List<List<List<Fixture>>>();
+
+        for( int i = 0; i < 4; i ++)
+        {
+            fixtureBlock.Add(new List<List<Fixture>>());
+        }
+
+        int[] seedings = Seed(rnd, div.Count); //randomise club order [team 0 is fixed]
+        int[] bergerTable = CreateBergerTable(rnd, div.Count); //round-robin format
+
+        for (int week = 0; week < div.Count - 2; week++)
+        {            
+            if (week % 2 < 1) //even weeks (/odd 2nd half of season)
+            {
+                fixtureBlock[0].Add(new List<Fixture>()); //1st-half of season (home/away)
+                fixtureBlock[2].Add(new List<Fixture>()); //2nd-half of season (reverse)
+                for (int match = 0; match < div.Count / 2; match++)
+                {
+                    fixtureBlock[0][week/2].Add(new Fixture(div[seedings[bergerTable[match * 2]]],
+                        div[seedings[bergerTable[match * 2 + 1]]])); //[0, 2, 4]
+                    fixtureBlock[2][week/2].Add(new Fixture(div[seedings[bergerTable[match * 2 + 1]]],
+                        div[seedings[bergerTable[match * 2]]])); //[5, 7, 9]
+                }
+            }
+            else //odd weeks (/even 2nd half of season)
+            {
+                fixtureBlock[1].Add(new List<Fixture>()); //1st-half of season (home/away)
+                fixtureBlock[3].Add(new List<Fixture>()); //2nd-half of season (reverse)
+                for (int match = 0; match < div.Count / 2; match++)
+                {
+                    fixtureBlock[1][(week - 1) / 2].Add(new Fixture(div[seedings[bergerTable[match * 2]]],
+                        div[seedings[bergerTable[match * 2 + 1]]])); //[1, 3]
+                    fixtureBlock[3][(week - 1) / 2].Add(new Fixture(div[seedings[bergerTable[match * 2 + 1]]],
+                        div[seedings[bergerTable[match * 2]]])); //[6, 8]
+                }
+            }
+            UpdateBergerTable(bergerTable); //rotate fixtures
+        }
+        fixtures = QFixtures(Interlace(rnd, fixtureBlock[0], fixtureBlock[1]),
+            Interlace(rnd, fixtureBlock[2], fixtureBlock[3]));
+    }
+
+    //[0, 1, 2], [3, 4, 5] -> [0, 1, 2, 3, 4, 5]
+    private Queue<List<Fixture>> QFixtures(Queue<List<Fixture>> queue1, Queue<List<Fixture>> queue2)
+    {
+        while ( queue2.Count > 0)
+        {
+            queue1.Enqueue(queue2.Dequeue());
+        }
+        return queue1;
+    }
+
+    //[0, 2, 4], [1, 3] -random-> [2, 3, 0, 1, 4]
+    private Queue<List<Fixture>> Interlace(Random rnd, List<List<Fixture>> big, List<List<Fixture>> small)
+    {
+        Queue<List<Fixture>> halfSeason = new Queue<List<Fixture>>();
+
+        int[] bigDraw = Shuffle(rnd, big.Count); //[0, 2, 4] -random-> [2, 0, 4]
+        int[] smallDraw = Shuffle(rnd, small.Count); //[1, 3] -random-> [3, 1]
+
+        for (int i = 0; i < small.Count; i++)
+        {
+            halfSeason.Enqueue(big[bigDraw[i]]);
+            halfSeason.Enqueue(small[smallDraw[i]]);
+        }
+        halfSeason.Enqueue(big[big.Count]);
+        return halfSeason;
+    }
+
+    public override List<Fixture> Next()
+    {
+        //is the season over?
+        if (fixtures.Count > 0)
+        {
+            return fixtures.Dequeue();
+        }
+        else
+        {
+            return Playoff();
+        }
+    }
+
+    public void GetTable()
+    {
+        //not yet implemented
+    }      
+
+    public abstract List<Fixture> Playoff();
+}
