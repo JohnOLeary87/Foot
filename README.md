@@ -1,5 +1,5 @@
 # Foot
-2D Turn-Based Football Management Simulator for Godot
+2D Turn-Based Football Management Simulator (C#/.Net) for Godot
 
 This code sample gives a snapshot of the implementation of the game's league and cup fixture systems.
 
