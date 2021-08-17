@@ -71,7 +71,7 @@ public abstract class Division : Competition
             halfSeason.Enqueue(big[bigDraw[i]]);
             halfSeason.Enqueue(small[smallDraw[i]]);
         }
-        halfSeason.Enqueue(big[big.Count-1]);
+        halfSeason.Enqueue(big[bigDraw[bigDraw.Length-1]]);
         return halfSeason;
     }
 
