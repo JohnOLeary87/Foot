@@ -68,10 +68,10 @@ public abstract class Division : Competition
 
         for (int i = 0; i < small.Count; i++)
         {
-            halfSeason.Enqueue(big[bigDraw[i]]);
-            halfSeason.Enqueue(small[smallDraw[i]]);
+            halfSeason.Enqueue(big[bigDraw[i]-i]);
+            halfSeason.Enqueue(small[smallDraw[i]-i]);
         }
-        halfSeason.Enqueue(big[big.Count]);
+        halfSeason.Enqueue(big[0]);
         return halfSeason;
     }
 
