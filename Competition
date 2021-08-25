@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-public abstract class Competition
+public abstract class Competition : ICompetition
 {
     protected List<List<Result>> results;
 
-    public abstract List<Fixture> Next();
-    public abstract List<Fixture> Check();
+    public abstract IEnumerable<Fixture> Next();
+    public abstract IEnumerable<Fixture> Check();
 
     //[0, 1, 2, 3, 4, 5] -random-> [0, 3, 4, 1, 2, 5] etc.
     protected int[] Seed(Random rnd, int size)
