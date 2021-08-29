@@ -2,6 +2,8 @@ using System.Collections.Generic;
 
 public interface ICompetition
 {
+    public IEnumerable<IEnumerable<Fixture>> Fixtures { get; }
+
     public IEnumerable<Fixture> Next();
     public IEnumerable<Fixture> Check();
 }
