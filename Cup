@@ -2,21 +2,21 @@ using System;
 using System.Collections.Generic;
 public abstract class Cup : Competition
 {
-    protected Stack<int[]> draw;
+    protected Stack<int[]> _draw;
 
     public Cup()
     {
-        draw = new Stack<int[]>();
+        _draw = new Stack<int[]>();
     }
 
     //recursively draw every round until final
     protected void Knockouts(Random rnd, int roundSize)
     {
-        if (roundSize > 2) //base case: final?
+        if (roundSize > 2)
         {
-            Knockouts(rnd, roundSize / 2); //recurse
+            Knockouts(rnd, roundSize / 2);
         }
-        draw.Push(DrawRound(rnd, roundSize));
+        _draw.Push(DrawRound(rnd, roundSize));
     }
 
     //draw one round
