@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 public abstract class Division : Competition
-{
-    protected Queue<List<Fixture>> fixtures;
-
+{ 
     public Division(Random rnd, List<int> div)
     {
         List<List<List<Fixture>>> fixtureBlock = new List<List<List<Fixture>>>();
@@ -44,7 +42,7 @@ public abstract class Division : Competition
             }
             UpdateBergerTable(bergerTable); //rotate fixtures
         }
-        fixtures = QFixtures(Interlace(rnd, fixtureBlock[0], fixtureBlock[1]),
+        _fixtures = QFixtures(Interlace(rnd, fixtureBlock[0], fixtureBlock[1]),
             Interlace(rnd, fixtureBlock[2], fixtureBlock[3]));
     }
 
@@ -76,11 +74,11 @@ public abstract class Division : Competition
     }
 
     //is the season over?
-    public override List<Fixture> Next()
+    public override IEnumerable<Fixture> Next()
     {
-        if (fixtures.Count > 0)
+        if (_fixtures.Count > 0)
         {
-            return fixtures.Dequeue();
+            return _fixtures.Dequeue();
         }
         else
         {
