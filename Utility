@@ -1,0 +1,53 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+public static class Util
+{
+    public static SaveFile GameLoad(string filePath, Laws laws)
+    {
+        if (File.Exists(filePath))
+        {
+            return BinaryDeserialize(filePath);
+        }
+        return new SaveFile(laws);
+    }        
+
+    public static void GameSave(SaveFile saveFile)
+    {
+        BinarySerialize(saveFile);
+    }
+
+    private static SaveFile BinaryDeserialize(string filePath)
+    {        
+        FileStream fileStream = File.OpenRead(filePath);
+        BinaryFormatter binaryFormatter = new BinaryFormatter();
+        SaveFile saveFile = (SaveFile)binaryFormatter.Deserialize(fileStream);
+        fileStream.Close();
+        return saveFile;        
+    }
+
+    private static void BinarySerialize(SaveFile saveFile)
+    {
+        FileStream fileStream = File.Create("");
+        BinaryFormatter binaryFormatter = new BinaryFormatter();
+        binaryFormatter.Serialize(fileStream, saveFile);
+        fileStream.Close();
+    }
+
+    public static List<string> TextFileRead(string filePath)
+    {
+        List<string> fileToStrings = new List<string>();
+
+        using (StreamReader sr = new StreamReader(filePath))
+        {
+            string line;
+
+            while ((line = sr.ReadLine()) != null)
+            {
+                fileToStrings.Add(line);
+            }
+        }
+        return fileToStrings;
+    }
+}
